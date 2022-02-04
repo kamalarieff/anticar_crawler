@@ -1,1 +1,2 @@
 alias GitHub
+alias Leetcode

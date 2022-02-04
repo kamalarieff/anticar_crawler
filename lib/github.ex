@@ -10,6 +10,7 @@ defmodule GitHub do
     get("https://www.reddit.com/r/fuckcars/top.json?t=day&limit=100&after=t3_" <> after_id)
   end
 
+  # TODO: rename this function
   def user_repos() do
     # get("/users/" <> login <> "/repos")
     get("https://www.reddit.com/r/fuckcars/top.json?t=day&limit=100")
@@ -45,5 +46,73 @@ defmodule GitHub do
     |> get_in(["data", "children"])
     |> Enum.at(1)
     |> get_in(["data", "body"])
+  end
+end
+
+defmodule Leetcode do
+  alias AnticarCrawler.Link
+
+  def recursive_function(curr) do
+    body =
+      curr
+      |> get_in(["data", "body"])
+
+    permalink =
+      curr
+      |> get_in(["data", "permalink"])
+
+    try do
+      match =
+        Regex.match?(
+          ~r<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)>,
+          body
+        )
+
+      # You can put this in the context
+      if match do
+        Link.create_comment(%{"body" => body, "permalink" => "https://reddit.com" <> permalink})
+      end
+    rescue
+      _ -> 'Error!'
+    end
+
+    cond do
+      get_in(curr, ["data", "replies"]) == "" ->
+        nil
+
+      get_in(curr, ["data", "replies"]) == nil ->
+        nil
+
+      true ->
+        replies =
+          get_in(curr, ["data", "replies"])
+          |> get_in(["data", "children"])
+
+        for i <- replies do
+          recursive_function(i)
+        end
+    end
+  end
+
+  def start_recursive(comments) do
+    # need to make this loop more readable
+    fake_data = massage_data(comments)
+    for entry <- fake_data do
+      for entry1 <- entry do
+        recursive_function(entry1)
+      end
+    end
+  end
+
+  defp massage_data(comments) do
+    comments
+    |> Enum.map(fn x ->
+      replies = Enum.at(x, 1) # 1 is for replies, 0 is for the post
+
+      replies
+      |> get_in(["data", "children"])
+
+      # |> Enum.at(1) # reddit's data structure is so weird
+    end)
   end
 end
