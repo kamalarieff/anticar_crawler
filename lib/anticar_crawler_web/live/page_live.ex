@@ -1,11 +1,42 @@
 defmodule AnticarCrawlerWeb.PageLive do
   use AnticarCrawlerWeb, :live_view
   alias AnticarCrawler.Link
+  alias AnticarCrawler.Link.Comment
+  alias GitHub
+  alias Leetcode
 
   @impl true
   def mount(_params, _session, socket) do
     links = Link.list_comments()
     {:ok, assign(socket, query: "", results: %{}, links: links)}
+  end
+
+  @impl true
+  def handle_event("trigger-crawler", _args, socket) do
+    tasks = GitHub.user_repos() |> GitHub.fetch_all_comments()
+    comments = Task.await_many(tasks, :infinity)
+    Leetcode.start_recursive(comments)
+    links = Link.list_comments()
+    {:noreply, assign(socket, links: links)}
+  end
+
+  @impl true
+  def handle_event("delete-comment", %{"comment_id" => id}, socket) do
+    case Link.delete_comment(%Comment{id: String.to_integer(id)}) do
+      {:ok, _} ->
+        links = Link.list_comments()
+        {:noreply, assign(socket, links: links)}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("delete-all", _args, socket) do
+    Link.delete_all_comments()
+    links = Link.list_comments()
+    {:noreply, assign(socket, links: links)}
   end
 
   @impl true

@@ -90,6 +90,25 @@ defmodule AnticarCrawler.Link do
   end
 
   @doc """
+  Deletes a comment.
+
+  ## Examples
+
+      iex> delete_all_comments(comment)
+      {:ok, %Comment{}}
+
+      iex> delete_all_comments(comment)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_all_comments() do
+    queryable =  from(c in Comment)
+    Ecto.Multi.new()
+    |> Ecto.Multi.delete_all(:delete_all, queryable)
+    |> Repo.transaction()
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking comment changes.
 
   ## Examples
