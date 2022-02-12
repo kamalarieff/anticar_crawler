@@ -52,7 +52,7 @@ end
 defmodule Leetcode do
   alias AnticarCrawler.Link
 
-  def recursive_function(curr) do
+  def recursive_function(curr, title) do
     body =
       curr
       |> get_in(["data", "body"])
@@ -60,6 +60,10 @@ defmodule Leetcode do
     permalink =
       curr
       |> get_in(["data", "permalink"])
+
+    id =
+      curr
+      |> get_in(["data", "id"])
 
     try do
       match =
@@ -70,7 +74,12 @@ defmodule Leetcode do
 
       # You can put this in the context
       if match do
-        Link.create_comment(%{"body" => body, "permalink" => "https://reddit.com" <> permalink})
+        Link.create_comment(%{
+          "body" => body,
+          "permalink" => "https://reddit.com" <> permalink,
+          "comment_id" => id,
+          "post_title" => title
+        })
       end
     rescue
       _ -> 'Error!'
@@ -89,7 +98,7 @@ defmodule Leetcode do
           |> get_in(["data", "children"])
 
         for i <- replies do
-          recursive_function(i)
+          recursive_function(i, title)
         end
     end
   end
@@ -97,9 +106,11 @@ defmodule Leetcode do
   def start_recursive(comments) do
     # need to make this loop more readable
     fake_data = massage_data(comments)
-    for entry <- fake_data do
+    title = get_title(comments)
+
+    for {entry, index} <- Enum.with_index(fake_data) do
       for entry1 <- entry do
-        recursive_function(entry1)
+        recursive_function(entry1, Enum.at(title, index))
       end
     end
   end
@@ -107,10 +118,26 @@ defmodule Leetcode do
   defp massage_data(comments) do
     comments
     |> Enum.map(fn x ->
-      replies = Enum.at(x, 1) # 1 is for replies, 0 is for the post
+      # 1 is for replies, 0 is for the post
+      replies = Enum.at(x, 1)
 
       replies
       |> get_in(["data", "children"])
+
+      # |> Enum.at(1) # reddit's data structure is so weird
+    end)
+  end
+
+  defp get_title(comments) do
+    comments
+    |> Enum.map(fn x ->
+      # 1 is for replies, 0 is for the post
+      replies = Enum.at(x, 0)
+
+      replies
+      |> get_in(["data", "children"])
+      |> Enum.at(0)
+      |> get_in(["data", "title"])
 
       # |> Enum.at(1) # reddit's data structure is so weird
     end)

@@ -18,7 +18,7 @@ defmodule AnticarCrawler.Link do
 
   """
   def list_comments do
-    Repo.all(Comment)
+    Repo.all(from c in Comment, where: c.status == "active")
   end
 
   @doc """
@@ -86,11 +86,13 @@ defmodule AnticarCrawler.Link do
 
   """
   def delete_comment(%Comment{} = comment) do
-    Repo.delete(comment)
+    comment
+    |> Comment.delete_changeset(%{status: "deleted"})
+    |> Repo.update()
   end
 
   @doc """
-  Deletes a comment.
+  Deletes all comments.
 
   ## Examples
 
@@ -102,9 +104,8 @@ defmodule AnticarCrawler.Link do
 
   """
   def delete_all_comments() do
-    queryable =  from(c in Comment)
     Ecto.Multi.new()
-    |> Ecto.Multi.delete_all(:delete_all, queryable)
+    |> Ecto.Multi.update_all(:delete_all, Comment, set: [status: "deleted"])
     |> Repo.transaction()
   end
 
