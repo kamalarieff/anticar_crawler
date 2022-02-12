@@ -58,6 +58,18 @@ defmodule AnticarCrawlerWeb.PageLive do
     end
   end
 
+  @doc """
+  Render HTML string as HTML
+  """
+  def parse_markdown(body) do
+    with {:ok, html, _params} <- Earmark.as_html(body) do
+      raw(html)
+    else
+      _ ->
+        body
+    end
+  end
+
   defp search(query) do
     if not AnticarCrawlerWeb.Endpoint.config(:code_reloader) do
       raise "action disabled when not in development"

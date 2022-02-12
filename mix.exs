@@ -50,7 +50,8 @@ defmodule AnticarCrawler.MixProject do
       {:tesla, "~> 1.4"},
       {:hackney, "~> 1.17"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
-      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev}
+      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
+      {:earmark, "~> 1.4"}
     ]
   end
 
