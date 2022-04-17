@@ -14,7 +14,7 @@ defmodule GitHub do
   # this returns the posts
   def user_repos() do
     # get("/users/" <> login <> "/repos")
-    get("https://www.reddit.com/r/fuckcars/top.json?t=day&limit=2")
+    get("https://www.reddit.com/r/fuckcars/top.json?t=day&limit=100")
   end
 
   def fetch_all_comments({:ok, %{body: body}}) do
