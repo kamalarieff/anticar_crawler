@@ -18,7 +18,7 @@ defmodule AnticarCrawler.Link do
 
   """
   def list_comments do
-    Repo.all(from c in Comment, where: c.status == "active")
+    Repo.all(from c in Comment, where: c.status == "active", order_by: [asc_nulls_last: c.post_id])
   end
 
   @doc """

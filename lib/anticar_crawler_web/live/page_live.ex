@@ -5,17 +5,177 @@ defmodule AnticarCrawlerWeb.PageLive do
   alias GitHub
   alias Leetcode
 
+  @post_index 0
+  @comments_index 1
+
+  @banned_users [
+    "twitterStatus_Bot",
+    "autotldr",
+    "B0tRank",
+    "WikiMobileLinkBot",
+    "RepostSleuthBot",
+    "Anti-ThisBot-IB",
+    "haikusbot",
+    "resavr_bot",
+    "alphabet_order_bot",
+    "ectbot",
+    "savevideobot",
+    "same_post_bot",
+    "Paid-Not-Payed-Bot",
+    "same_subreddit_bot",
+    "SaveVideo",
+    "wikipedia_answer_bot",
+    "auddbot",
+    "sneakpeekbot",
+    "JustAnAlpacaBot",
+    "ReverseCaptioningBot",
+    "WikiSummarizerBot",
+    "sub_doesnt_exist_bot",
+    "properu",
+    "AutoModerator",
+    "RemindMeBot",
+    "FatFingerHelperBot",
+    "LuckyNumber-Bot",
+    "timee_bot",
+    "WhyNotCollegeBoard",
+    "AmputatorBot",
+    "botrickbateman",
+    "UkraineWithoutTheBot"
+  ]
+
   @impl true
   def mount(_params, _session, socket) do
     links = Link.list_comments()
     {:ok, assign(socket, query: "", results: %{}, links: links)}
   end
 
+  @doc """
+  This will actually build out the comment tree. I think it's a useful data structure but
+  it's not very performant. So please check out the next method of implementation
+  """
+  defp recursive_new(curr, res) do
+    body =
+      curr
+      |> get_in(["data", "body"])
+
+    res = res ++ [body]
+
+    cond do
+      is_nil(body) ->
+        res
+
+      get_in(curr, ["data", "replies"]) == "" ->
+        res
+
+      get_in(curr, ["data", "replies"]) == nil ->
+        res
+
+      true ->
+        replies =
+          curr
+          |> get_in(["data", "replies"])
+          |> get_in(["data", "children"])
+
+        for reply <- replies do
+          recursive_new(reply, res)
+        end
+    end
+  end
+
+  defp recursive_comments(curr, post) do
+    body =
+      curr
+      |> get_in(["data", "body"])
+
+    permalink =
+      curr
+      |> get_in(["data", "permalink"])
+
+    id =
+      curr
+      |> get_in(["data", "id"])
+
+    author =
+      curr
+      |> get_in(["data", "author"])
+
+    try do
+      match =
+        Regex.match?(
+          ~r<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)>,
+          body
+        )
+
+      # these two regexes have one very tiny difference between them. This regex doesn't capture the last )
+      if match do
+        link =
+          Regex.run(
+            ~r<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9(@:%_\+.~#?&//=]*)>,
+            body
+          )
+
+        case Enum.member?(@banned_users, author) do
+          false ->
+            Link.create_comment(%{
+              "body" => body,
+              "permalink" => "https://reddit.com" <> permalink,
+              "comment_id" => id,
+              "post_title" => post["title"],
+              "post_id" => post["id"]
+            })
+        end
+      end
+    rescue
+      _ -> 'Error!'
+    end
+
+    cond do
+      is_nil(body) ->
+        nil
+
+      get_in(curr, ["data", "replies"]) == "" ->
+        nil
+
+      get_in(curr, ["data", "replies"]) == nil ->
+        nil
+
+      true ->
+        replies =
+          curr
+          |> get_in(["data", "replies"])
+          |> get_in(["data", "children"])
+
+        for reply <- replies do
+          recursive_comments(reply, post)
+        end
+    end
+  end
+
   @impl true
   def handle_event("trigger-crawler", _args, socket) do
     tasks = GitHub.user_repos() |> GitHub.fetch_all_comments()
-    comments = Task.await_many(tasks, :infinity)
-    Leetcode.start_recursive(comments)
+    post_and_comments = Task.await_many(tasks, :infinity)
+    # comments here include the post and comments thing
+    # Leetcode.start_recursive(post_and_comments)
+    post_and_comments
+    |> Enum.map(fn entry ->
+      # 0 is for the post, 1 is for comments 
+      post = Enum.at(entry, 0)
+
+      post_information =
+        post
+        |> get_in(["data", "children"])
+        |> Enum.at(0)
+        |> get_in(["data"])
+
+      entry
+      |> Enum.at(1)
+      |> get_in(["data", "children"])
+      |> Enum.map(fn comment ->
+        recursive_comments(comment, post_information)
+      end)
+    end)
+
     links = Link.list_comments()
 
     {:noreply,

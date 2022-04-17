@@ -11,18 +11,10 @@ defmodule GitHub do
   end
 
   # TODO: rename this function
+  # this returns the posts
   def user_repos() do
     # get("/users/" <> login <> "/repos")
-    get("https://www.reddit.com/r/fuckcars/top.json?t=day&limit=100")
-  end
-
-  def get_last(response) do
-    response.body["data"]["children"]
-    |> List.last()
-  end
-
-  def get_id(data) do
-    data["data"]["id"]
+    get("https://www.reddit.com/r/fuckcars/top.json?t=day&limit=2")
   end
 
   def fetch_all_comments({:ok, %{body: body}}) do
@@ -31,6 +23,7 @@ defmodule GitHub do
     |> Enum.map(fn id ->
       Task.async(fn ->
         {:ok, response} = get("https://www.reddit.com/r/fuckcars/comments/" <> id <> ".json")
+        # {:ok, response} = get("https://www.reddit.com/r/fuckcars/comments/u5i2ez.json")
         response.body
       end)
     end)
@@ -74,12 +67,12 @@ defmodule Leetcode do
 
       # You can put this in the context
       if match do
-        Link.create_comment(%{
-          "body" => body,
-          "permalink" => "https://reddit.com" <> permalink,
-          "comment_id" => id,
-          "post_title" => title
-        })
+        # Link.create_comment(%{
+        #   "body" => body,
+        #   "permalink" => "https://reddit.com" <> permalink,
+        #   "comment_id" => id,
+        #   "post_title" => title
+        # })
       end
     rescue
       _ -> 'Error!'
@@ -103,28 +96,45 @@ defmodule Leetcode do
     end
   end
 
-  def start_recursive(comments) do
+  def start_recursive(post_and_comments) do
     # need to make this loop more readable
-    fake_data = massage_data(comments)
-    title = get_title(comments)
+    comments = get_comments(post_and_comments)
+    # IO.inspect(comments, label: "comments")
+    title = get_title(post_and_comments) # title is an array
+    IO.inspect(title, label: "title")
+    post = get_post_information(post_and_comments) # post is an array
+    IO.inspect(post, label: "post")
 
-    for {entry, index} <- Enum.with_index(fake_data) do
+    for {entry, index} <- Enum.with_index(comments) do
+      # IO.inspect(entry, label: "entry")
       for entry1 <- entry do
         recursive_function(entry1, Enum.at(title, index))
       end
     end
   end
 
-  defp massage_data(comments) do
-    comments
+  defp get_comments(post_and_comments) do
+    post_and_comments
     |> Enum.map(fn x ->
-      # 1 is for replies, 0 is for the post
+      # 1 is for comments, 0 is for the post
       replies = Enum.at(x, 1)
 
       replies
       |> get_in(["data", "children"])
 
       # |> Enum.at(1) # reddit's data structure is so weird
+    end)
+  end
+
+  defp get_post_information(post_and_comments) do
+    post_and_comments
+    |> Enum.map(fn x ->
+      # 1 is for comments, 0 is for the post
+      replies = Enum.at(x, 0)
+
+      replies
+      |> get_in(["data", "children"])
+      |> Enum.at(0)
     end)
   end
 
