@@ -3,7 +3,6 @@ defmodule AnticarCrawlerWeb.PageLive do
   alias AnticarCrawler.Link
   alias AnticarCrawler.Link.Comment
   alias GitHub
-  alias Leetcode
 
   @post_index 0
   @comments_index 1
@@ -156,7 +155,6 @@ defmodule AnticarCrawlerWeb.PageLive do
     tasks = GitHub.user_repos() |> GitHub.fetch_all_comments()
     post_and_comments = Task.await_many(tasks, :infinity)
     # comments here include the post and comments thing
-    # Leetcode.start_recursive(post_and_comments)
     post_and_comments
     |> Enum.map(fn entry ->
       # 0 is for the post, 1 is for comments 
