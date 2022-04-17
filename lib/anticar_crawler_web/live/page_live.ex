@@ -17,7 +17,11 @@ defmodule AnticarCrawlerWeb.PageLive do
     comments = Task.await_many(tasks, :infinity)
     Leetcode.start_recursive(comments)
     links = Link.list_comments()
-    {:noreply, assign(socket, links: links)}
+
+    {:noreply,
+     socket
+     |> assign(links: links)
+     |> put_flash(:info, "Fetched successfully!")}
   end
 
   @impl true
