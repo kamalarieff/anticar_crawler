@@ -39,7 +39,9 @@ defmodule AnticarCrawlerWeb.PageLive do
     "WhyNotCollegeBoard",
     "AmputatorBot",
     "botrickbateman",
-    "UkraineWithoutTheBot"
+    "UkraineWithoutTheBot",
+    "gifendore",
+    "GifReversingBot"
   ]
 
   @impl true
