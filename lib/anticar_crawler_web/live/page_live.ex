@@ -2,7 +2,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   use AnticarCrawlerWeb, :live_view
   alias AnticarCrawler.Link
   alias AnticarCrawler.Link.Comment
-  alias GitHub
+  alias Reddit
 
   @post_index 0
   @comments_index 1
@@ -152,7 +152,7 @@ defmodule AnticarCrawlerWeb.PageLive do
 
   @impl true
   def handle_event("trigger-crawler", _args, socket) do
-    tasks = GitHub.user_repos() |> GitHub.fetch_all_comments()
+    tasks = Reddit.top_posts() |> Reddit.fetch_post_and_comments()
     post_and_comments = Task.await_many(tasks, :infinity)
     # comments here include the post and comments thing
     post_and_comments
