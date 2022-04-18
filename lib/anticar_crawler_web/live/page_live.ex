@@ -50,10 +50,8 @@ defmodule AnticarCrawlerWeb.PageLive do
     {:ok, assign(socket, query: "", results: %{}, links: links)}
   end
 
-  @doc """
-  This will actually build out the comment tree. I think it's a useful data structure but
-  it's not very performant. So please check out the next method of implementation
-  """
+  # This will actually build out the comment tree. I think it's a useful data structure but
+  # it's not very performant. So please check out the next method of implementation
   defp recursive_new(curr, res) do
     body =
       curr
