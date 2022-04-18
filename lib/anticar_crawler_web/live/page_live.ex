@@ -105,6 +105,13 @@ defmodule AnticarCrawlerWeb.PageLive do
           body
         )
 
+      blocked_links = [
+        ~r<google.com/maps>,
+        ~r<(fr|en).wikipedia.org>,
+        # Not Just Bikes - I am not a "Cyclist" (and most Dutch people aren't either)
+        ~r<\bvMed1qceJ_Q\b>
+      ]
+
       # these two regexes have one very tiny difference between them. This regex doesn't capture the last )
       if match do
         link =
@@ -112,16 +119,27 @@ defmodule AnticarCrawlerWeb.PageLive do
             ~r<https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9(@:%_\+.~#?&//=]*)>,
             body
           )
+          |> Enum.at(0)
 
         case Enum.member?(@banned_users, author) do
           false ->
-            Link.create_comment(%{
-              "body" => body,
-              "permalink" => "https://reddit.com" <> permalink,
-              "comment_id" => id,
-              "post_title" => post["title"],
-              "post_id" => post["id"]
-            })
+            match_any_blocked_links =
+              blocked_links
+              |> Enum.map(fn regex ->
+                Regex.match?(regex, link)
+              end)
+              |> Enum.any?()
+
+            case match_any_blocked_links do
+              false ->
+                Link.create_comment(%{
+                  "body" => body,
+                  "permalink" => "https://reddit.com" <> permalink,
+                  "comment_id" => id,
+                  "post_title" => post["title"],
+                  "post_id" => post["id"]
+                })
+            end
         end
       end
     rescue
