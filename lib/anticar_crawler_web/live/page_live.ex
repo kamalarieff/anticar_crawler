@@ -46,11 +46,19 @@ defmodule AnticarCrawlerWeb.PageLive do
 
   @blocked_links [
     ~r<google.com/maps>,
-    ~r<(fr|en).wikipedia.org>,
+    ~r<maps.app.goo.gl>,
+    ~r<earth.google.com>,
+    ~r<(fr|en|upload)(\.m)?.wikipedia.org>,
     # Not Just Bikes - I am not a "Cyclist" (and most Dutch people aren't either)
     ~r<\bvMed1qceJ_Q\b>,
     # Not Just Bikes - Why Canadians Can't Bike in the Winter (but Finnish people can)
-    ~r<\bUhx-26GfCBU\b>
+    ~r<\bUhx-26GfCBU\b>,
+    # Climate Town - The Suburbs Are Bleeding America Dry | Climate Town (feat. Not Just Bikes)
+    ~r<\bSfsCniN7Nsc\b>,
+    # Climate Town - How The Auto Industry Carjacked The American Dream | Climate Town
+    ~r<\boOttvpjJvAo\b>,
+    # Not Just Bikes - The Ugly, Dangerous, and Inefficient Stroads found all over the US & Canada [ST05]
+    ~r<\bORzNZUeUHAM\b>
   ]
 
   @impl true
