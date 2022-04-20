@@ -45,7 +45,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   ]
 
   @blocked_links [
-    ~r<google.com/maps>,
+    ~r<(google\.com|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
     ~r<earth.google.com>,
     ~r<(fr|en|upload)(\.m)?.wikipedia.org>,
