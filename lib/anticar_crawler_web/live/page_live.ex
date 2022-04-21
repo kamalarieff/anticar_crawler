@@ -3,6 +3,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   alias AnticarCrawler.Link
   alias AnticarCrawler.Link.Comment
   alias Reddit
+  alias PostState
 
   @post_index 0
   @comments_index 1
@@ -139,12 +140,20 @@ defmodule AnticarCrawlerWeb.PageLive do
                Regex.match?(regex, link)
              end)
              |> Enum.any?() do
+        %{"id" => post_id, "link_flair_text" => link_flair_text, "title" => post_title} = post
+
+        is_submitter =
+          curr
+          |> get_in(["data", "is_submitter"])
+
+        PostState.update(post_id, %{"tag" => link_flair_text, "is_op" => is_submitter})
+
         Link.create_comment(%{
           "body" => body,
           "permalink" => "https://reddit.com" <> permalink,
           "comment_id" => id,
-          "post_title" => post["title"],
-          "post_id" => post["id"]
+          "post_title" => post_title,
+          "post_id" => post_id
         })
       end
     rescue

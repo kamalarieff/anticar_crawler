@@ -27,3 +27,26 @@ defmodule Reddit do
   end
 end
 
+defmodule PostState do
+  use Agent
+
+  def start_link(_opts) do
+    initial_value = %{}
+
+    Agent.start_link(fn -> initial_value end, name: __MODULE__)
+  end
+
+  def value do
+    Agent.get(__MODULE__, & &1)
+  end
+
+  def get_by_post_id(post_id) do
+    Agent.get(__MODULE__, &Map.get(&1, post_id))
+  end
+
+  def update(post_id, %{"tag" => tag, "is_op" => is_op}) do
+    Agent.update(__MODULE__, fn state ->
+      Map.merge(state, %{post_id => %{"tag" => tag, "is_op" => is_op}})
+    end)
+  end
+end

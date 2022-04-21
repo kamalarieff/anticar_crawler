@@ -14,9 +14,10 @@ defmodule AnticarCrawler.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: AnticarCrawler.PubSub},
       # Start the Endpoint (http/https)
-      AnticarCrawlerWeb.Endpoint
+      AnticarCrawlerWeb.Endpoint,
       # Start a worker by calling: AnticarCrawler.Worker.start_link(arg)
       # {AnticarCrawler.Worker, arg}
+      PostState,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
