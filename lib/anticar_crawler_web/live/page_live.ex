@@ -264,6 +264,40 @@ defmodule AnticarCrawlerWeb.PageLive do
     end
   end
 
+  @doc """
+  Show tags from reddit
+  """
+  def show_tag(assigns) do
+    tag = PostState.get_by_post_id(assigns.post_id)["tag"]
+
+    case is_nil(tag) do
+      false ->
+        ~H"""
+        <span class="badge p-4"><%= tag %></span>
+        """
+      _ -> 
+        ~H"""
+        """
+    end
+  end
+
+  @doc """
+  Show badge if OP
+  """
+  def show_op(assigns) do
+    is_op = PostState.get_by_post_id(assigns.post_id)["is_op"]
+
+    case is_op do
+      true ->
+        ~H"""
+        <span class="badge badge-info p-4">OP</span>
+        """
+      _ -> 
+        ~H"""
+        """
+    end
+  end
+
   defp search(query) do
     if not AnticarCrawlerWeb.Endpoint.config(:code_reloader) do
       raise "action disabled when not in development"
