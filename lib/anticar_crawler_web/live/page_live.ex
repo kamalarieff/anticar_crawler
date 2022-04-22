@@ -50,7 +50,7 @@ defmodule AnticarCrawlerWeb.PageLive do
     ~r<maps.app.goo.gl>,
     ~r<g.page>,
     ~r<earth.google.com>,
-    ~r<(fr|en|de|upload)(\.m)?.wikipedia.org>,
+    ~r<(fr|en|de|sv|upload)(\.m)?.wikipedia.org>,
     # Not Just Bikes - I am not a "Cyclist" (and most Dutch people aren't either)
     ~r<\bvMed1qceJ_Q\b>,
     # Not Just Bikes - Why Canadians Can't Bike in the Winter (but Finnish people can)
