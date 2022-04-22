@@ -48,6 +48,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   @blocked_links [
     ~r<(google\.(com|ca)|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
+    ~r<g.page>,
     ~r<earth.google.com>,
     ~r<(fr|en|de|upload)(\.m)?.wikipedia.org>,
     # Not Just Bikes - I am not a "Cyclist" (and most Dutch people aren't either)
@@ -63,7 +64,7 @@ defmodule AnticarCrawlerWeb.PageLive do
     # CaseyNeistat - Bike Lanes by Casey Neistat
     ~r<\bbzE-IMaegzQ\b>,
     # Not Just Bikes - The Best Country in the World for Drivers
-    ~r<\bd8RRE2rDw4k\b>,
+    ~r<\bd8RRE2rDw4k\b>
   ]
 
   @impl true
