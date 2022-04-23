@@ -20,6 +20,17 @@ defmodule AnticarCrawlerWeb.PageLive do
   end
 
   @impl true
+  def handle_event("undo-deleted-comment", _args, socket) do
+    Link.undo_delete_comment()
+    links = Link.list_comments()
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Successfully undo last deleted comment")
+     |> assign(links: links)}
+  end
+
+  @impl true
   def handle_event("delete-comment", %{"comment_id" => id}, socket) do
     case Link.delete_comment(%Comment{id: String.to_integer(id)}) do
       {:ok, _} ->

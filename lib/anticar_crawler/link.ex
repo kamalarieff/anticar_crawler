@@ -18,7 +18,9 @@ defmodule AnticarCrawler.Link do
 
   """
   def list_comments do
-    Repo.all(from c in Comment, where: c.status == "active", order_by: [asc_nulls_last: c.post_id])
+    Repo.all(
+      from c in Comment, where: c.status == "active", order_by: [asc_nulls_last: c.post_id]
+    )
   end
 
   @doc """
@@ -120,5 +122,27 @@ defmodule AnticarCrawler.Link do
   """
   def change_comment(%Comment{} = comment, attrs \\ %{}) do
     Comment.changeset(comment, attrs)
+  end
+
+  @doc """
+  Undo last deleted comment to active status
+
+  ## Examples
+
+      iex> undo_delete_comment()
+      %Ecto.Changeset{data: %Comment{}}
+
+  """
+  def undo_delete_comment() do
+    query = from c in Comment, where: c.status == "deleted", order_by: [desc: c.updated_at]
+
+    deleted_comment =
+      query
+      |> first()
+      |> Repo.one()
+
+    deleted_comment
+    |> Comment.changeset(%{status: "active"})
+    |> Repo.update()
   end
 end
