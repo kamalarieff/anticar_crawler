@@ -5,3 +5,7 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+
+.alert:empty {
+    display: none;
+}
