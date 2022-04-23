@@ -1,2 +1,2 @@
-alias GitHub
-alias Leetcode
+alias Reddit
+alias AnticarCrawler.Link
