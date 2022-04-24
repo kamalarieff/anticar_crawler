@@ -75,7 +75,8 @@ defmodule AnticarCrawlerWeb.PageLive do
     {:noreply,
      socket
      |> assign(links: links)
-     |> put_flash(:info, "Fetched successfully!")}
+     |> push_event("notify", %{content: "Fetched successfully"})
+     |> clear_flash(:info)}
   end
 
   @doc """
