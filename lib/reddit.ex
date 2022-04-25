@@ -96,7 +96,7 @@ defmodule Reddit.Processor do
   ]
 
   @blocked_links [
-    ~r<(google\.(com|ca)|goo\.gl)/maps>,
+    ~r<(google\.(com|ca|de)|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
     ~r<g.page>,
     ~r<earth.google.com>,
