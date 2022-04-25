@@ -114,7 +114,9 @@ defmodule Reddit.Processor do
     # CaseyNeistat - Bike Lanes by Casey Neistat
     ~r<\bbzE-IMaegzQ\b>,
     # Not Just Bikes - The Best Country in the World for Drivers
-    ~r<\bd8RRE2rDw4k\b>
+    ~r<\bd8RRE2rDw4k\b>,
+    # Not Just Bikes - Cities Aren't Loud: Cars Are Loud
+    ~r<\bCTV-wwszGw8\b>
   ]
 
   def start_link(state) do
