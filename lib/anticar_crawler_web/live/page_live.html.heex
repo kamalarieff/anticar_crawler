@@ -19,6 +19,9 @@
         <th colspan="1">Actions</th>
       </tr>
       <%= for temp <- @links do %>
+        <tr>
+          <td colspan="3"><%= Reddit.get_embed(temp.post_id) %></td>
+        </tr>
         <tr class="hover">
           <td colspan="2" class="prose break-normal whitespace-normal text-lg"><%= parse_markdown(temp.body) %></td>
           <td colspan="1" class="flex flex-col py-16 px-8 space-y-2">

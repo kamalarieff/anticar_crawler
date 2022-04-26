@@ -25,6 +25,12 @@ defmodule Reddit do
       end)
     end)
   end
+
+  def get_embed(id) do
+    {:ok, %{body: body}} = get("https://www.redditmedia.com/r/fuckcars/comments/"  <> id <> "?embed=true")
+    Phoenix.HTML.raw(body)
+  end
+  
 end
 
 defmodule PostState do
