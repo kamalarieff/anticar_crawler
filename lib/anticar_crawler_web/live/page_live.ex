@@ -8,7 +8,8 @@ defmodule AnticarCrawlerWeb.PageLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    links = Link.list_comments()
+    links = Link.list_comments() |> group_by_post_id()
+
     {:ok, assign(socket, query: "", results: %{}, links: links, notifications: []),
      temporary_assigns: [notifications: []]}
   end
@@ -26,7 +27,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   @impl true
   def handle_event("undo-deleted-comment", _args, socket) do
     Link.undo_delete_comment()
-    links = Link.list_comments()
+    links = Link.list_comments() |> group_by_post_id()
 
     notification = %{
       content: "Successfully undo last deleted comment",
@@ -43,7 +44,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   def handle_event("delete-comment", %{"comment_id" => id}, socket) do
     case Link.delete_comment(%Comment{id: String.to_integer(id)}) do
       {:ok, _} ->
-        links = Link.list_comments()
+        links = Link.list_comments() |> group_by_post_id()
         {:noreply, assign(socket, links: links)}
 
       _ ->
@@ -54,7 +55,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   @impl true
   def handle_event("delete-all", _args, socket) do
     Link.delete_all_comments()
-    links = Link.list_comments()
+    links = Link.list_comments() |> group_by_post_id()
     {:noreply, assign(socket, links: links)}
   end
 
@@ -79,7 +80,7 @@ defmodule AnticarCrawlerWeb.PageLive do
 
   @impl true
   def handle_info(:process_comments_success, socket) do
-    links = Link.list_comments()
+    links = Link.list_comments() |> group_by_post_id()
     notification = %{content: "Fetched successfully", id: Integer.to_string(Enum.random(0..100))}
 
     {:noreply,
@@ -172,5 +173,11 @@ defmodule AnticarCrawlerWeb.PageLive do
         String.starts_with?(app, query) and not List.starts_with?(desc, ~c"ERTS"),
         into: %{},
         do: {app, vsn}
+  end
+
+  defp group_by_post_id(links) do
+    Enum.group_by(links, fn x ->
+      Map.get(x, :post_id)
+    end)
   end
 end
