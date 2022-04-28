@@ -29,6 +29,7 @@ config :anticar_crawler, AnticarCrawlerWeb.Endpoint,
     #   cd: Path.expand("../assets", __DIR__)
     # ],
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    esbuild: {Esbuild, :install_and_run, [:animxyz, ~w(--sourcemap=inline --watch)]},
     # npx: [
     #   "tailwindcss",
     #   "--input=css/app.css",

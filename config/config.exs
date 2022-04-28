@@ -44,6 +44,11 @@ config :esbuild,
     args: ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ],
+  animxyz: [
+    args: ~w(js/animxyz.js --bundle --outdir=../priv/static/assets),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 # Import environment specific config. This must remain at the bottom

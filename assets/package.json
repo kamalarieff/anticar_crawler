@@ -14,6 +14,7 @@
     "topbar": "^0.1.4"
   },
   "devDependencies": {
+    "@animxyz/core": "^0.6.6",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@tailwindcss/typography": "^0.5.1",
