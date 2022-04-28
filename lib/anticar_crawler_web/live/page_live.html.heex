@@ -1,11 +1,4 @@
-<div x-data="{ open: false, message: '' }" @phx:notify.window="open = true; message = $event.detail.content">
-  <div class="fixed right-4 top-4 alert alert-info z-10" x-show="open" x-transition x-cloak @click="open = false">
-    <div class="space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      <span x-text="message"></span>
-    </div>
-  </div>
-</div>
+<.notification_toast content="test" notifications={@notifications} />
 <div class="fixed bottom-2 right-4 z-10">
   <button class="btn btn-primary" phx-click="trigger-crawler">Trigger crawler</button>
   <button class="btn btn-secondary" phx-click="undo-deleted-comment">Undo</button>

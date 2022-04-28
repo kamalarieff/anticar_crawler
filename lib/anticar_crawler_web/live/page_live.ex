@@ -4,19 +4,23 @@ defmodule AnticarCrawlerWeb.PageLive do
   alias AnticarCrawler.Link.Comment
   alias Reddit
   alias PostState
+  alias Phoenix.LiveView.JS
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, query: "", results: %{}, links: [])}
+    links = Link.list_comments()
+    {:ok, assign(socket, query: "", results: %{}, links: links, notifications: []),
+     temporary_assigns: [notifications: []]}
   end
 
   @impl true
   def handle_event("trigger-crawler", _args, socket) do
     GenServer.cast(Reddit.Processor, {:process_comments, self()})
+    notification = %{content: "Fetching...", id: Integer.to_string(Enum.random(0..100))}
 
     {:noreply,
      socket
-     |> put_flash(:info, "Fetching...")}
+     |> assign(:notifications, [notification])}
   end
 
   @impl true
@@ -24,9 +28,14 @@ defmodule AnticarCrawlerWeb.PageLive do
     Link.undo_delete_comment()
     links = Link.list_comments()
 
+    notification = %{
+      content: "Successfully undo last deleted comment",
+      id: Integer.to_string(Enum.random(0..100))
+    }
+
     {:noreply,
      socket
-     |> put_flash(:info, "Successfully undo last deleted comment")
+     |> assign(:notifications, [notification])
      |> assign(links: links)}
   end
 
@@ -71,11 +80,11 @@ defmodule AnticarCrawlerWeb.PageLive do
   @impl true
   def handle_info(:process_comments_success, socket) do
     links = Link.list_comments()
+    notification = %{content: "Fetched successfully", id: Integer.to_string(Enum.random(0..100))}
 
     {:noreply,
      socket
-     |> assign(links: links)
-     |> push_event("notify", %{content: "Fetched successfully"})
+     |> assign(links: links, notifications: [notification])
      |> clear_flash(:info)}
   end
 
@@ -119,10 +128,38 @@ defmodule AnticarCrawlerWeb.PageLive do
         ~H"""
         <span class="badge badge-info p-4">OP</span>
         """
-      _ -> 
+
+      _ ->
         ~H"""
         """
     end
+  end
+
+  @doc """
+  Show notification toast with animation
+  """
+  def notification_toast(assigns) do
+    ~H"""
+    <div class="fixed right-4 top-4 z-10">
+      <div class="flex flex-col space-y-2" id="notifications" phx-update="append">
+        <%= for notification <- @notifications do %>
+          <div class="alert alert-info xyz-in" xyz="fade right" id={notification.id} phx-click={hide_notification()}>
+            <div class="space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span><%= notification.content %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
+  def hide_notification(js \\ %JS{}) do
+    js
+    |> JS.remove_class("xyz-in")
+    |> JS.add_class("xyz-out")
+    |> JS.hide(transition: "xyz-out", time: 500)
   end
 
   defp search(query) do
