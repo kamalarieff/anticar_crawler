@@ -27,10 +27,21 @@ defmodule Reddit do
   end
 
   def get_embed(id) do
-    {:ok, %{body: body}} = get("https://www.redditmedia.com/r/fuckcars/comments/"  <> id <> "?embed=true")
+    body =
+      case PostState.get_by_post_id(id) do
+        nil ->
+          {:ok, %{body: body}} =
+            get("https://www.redditmedia.com/r/fuckcars/comments/" <> id <> "?embed=true")
+
+          PostState.update(id, %{"body" => body})
+          body
+
+        post_state ->
+          post_state["body"]
+      end
+
     Phoenix.HTML.raw(body)
   end
-  
 end
 
 defmodule PostState do
@@ -50,9 +61,17 @@ defmodule PostState do
     Agent.get(__MODULE__, &Map.get(&1, post_id))
   end
 
-  def update(post_id, %{"tag" => tag, "is_op" => is_op}) do
+  def update(post_id, attrs \\ %{}) do
     Agent.update(__MODULE__, fn state ->
-      Map.merge(state, %{post_id => %{"tag" => tag, "is_op" => is_op}})
+      temp =
+        state[post_id]
+        |> case do
+          nil -> %{}
+          _ -> state[post_id]
+        end
+        |> Map.merge(attrs)
+
+      Map.merge(state, %{post_id => temp})
     end)
   end
 end
