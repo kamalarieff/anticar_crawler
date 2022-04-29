@@ -28,16 +28,18 @@ defmodule Reddit do
 
   def get_embed(id) do
     body =
-      case PostState.get_by_post_id(id) do
-        nil ->
+      with {:post_state, post_state} <- {:post_state, PostState.get_by_post_id(id)},
+           {:is_post_state_nil, false} <- {:is_post_state_nil, is_nil(post_state)},
+           {:body, body} <- {:body, Map.get(post_state, "body")},
+           {:is_body_nil, false} <- {:is_body_nil, is_nil(body)} do
+        body
+      else
+        _ ->
           {:ok, %{body: body}} =
             get("https://www.redditmedia.com/r/fuckcars/comments/" <> id <> "?embed=true")
 
           PostState.update(id, %{"body" => body})
           body
-
-        post_state ->
-          post_state["body"]
       end
 
     Phoenix.HTML.raw(body)
