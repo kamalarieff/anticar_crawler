@@ -119,11 +119,12 @@ defmodule Reddit.Processor do
     "botrickbateman",
     "UkraineWithoutTheBot",
     "gifendore",
-    "GifReversingBot"
+    "GifReversingBot",
+    "MAGIC_EYE_BOT"
   ]
 
   @blocked_links [
-    ~r<(google\.(com|ca|de)|goo\.gl)/maps>,
+    ~r<(google\.(com|ca|de|at|nl)|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
     ~r<g.page>,
     ~r<earth.google.com>,
@@ -143,7 +144,11 @@ defmodule Reddit.Processor do
     # Not Just Bikes - The Best Country in the World for Drivers
     ~r<\bd8RRE2rDw4k\b>,
     # Not Just Bikes - Cities Aren't Loud: Cars Are Loud
-    ~r<\bCTV-wwszGw8\b>
+    ~r<\bCTV-wwszGw8\b>,
+    # Not Just Bikes - Why Grocery Shopping is Better in Amsterdam
+    ~r<\bkYHTzqHIngk\b>,
+    # Not Just Bikes - Business Parks Suck (but they don't have to)
+    ~r<\bSDXB0CY2tSQ\b>
   ]
 
   def start_link(state) do
