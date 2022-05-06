@@ -1,4 +1,4 @@
-<.notification_toast content="test" notifications={@notifications} />
+<.notification_toast notifications={@notifications} />
 <div class="fixed bottom-2 right-4 z-10">
   <button class="btn btn-primary" phx-click="trigger-crawler">Trigger crawler</button>
   <button class="btn btn-secondary" phx-click="undo-deleted-comment">Undo</button>
@@ -21,7 +21,7 @@
             <td colspan="1" class="flex flex-col py-16 px-8 space-y-2">
               <div class="flex space-x-2">
                 <.show_tag post_id={post_id} />
-                <.show_op post_id={post_id} />
+                <.show_op comment_id={comment.comment_id} />
               </div>
               <a class="prose link break-normal whitespace-normal text-lg" href={comment.permalink} target="_blank"><%= comment.post_title %></a>
               <button class="btn bg-red-600 hover:bg-red-500" phx-click="delete-comment" phx-value-comment_id={comment.id}>Delete</button>

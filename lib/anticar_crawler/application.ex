@@ -18,6 +18,7 @@ defmodule AnticarCrawler.Application do
       # Start a worker by calling: AnticarCrawler.Worker.start_link(arg)
       # {AnticarCrawler.Worker, arg}
       PostState,
+      CommentState,
       Reddit.Processor
     ]
 

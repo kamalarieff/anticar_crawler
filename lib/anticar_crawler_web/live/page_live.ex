@@ -4,6 +4,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   alias AnticarCrawler.Link.Comment
   alias Reddit
   alias PostState
+  alias CommentState
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -112,7 +113,8 @@ defmodule AnticarCrawlerWeb.PageLive do
         ~H"""
         <span class="badge p-4"><%= tag %></span>
         """
-      _ -> 
+
+      _ ->
         ~H"""
         """
     end
@@ -122,7 +124,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   Show badge if OP
   """
   def show_op(assigns) do
-    is_op = PostState.get_by_post_id(assigns.post_id)["is_op"]
+    is_op = CommentState.get_by_comment_id(assigns.comment_id)["is_op"]
 
     case is_op do
       true ->

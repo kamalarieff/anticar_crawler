@@ -78,6 +78,38 @@ defmodule PostState do
   end
 end
 
+defmodule CommentState do
+  use Agent
+
+  def start_link(_opts) do
+    initial_value = %{}
+
+    Agent.start_link(fn -> initial_value end, name: __MODULE__)
+  end
+
+  def value do
+    Agent.get(__MODULE__, & &1)
+  end
+
+  def get_by_comment_id(comment_id) do
+    Agent.get(__MODULE__, &Map.get(&1, comment_id))
+  end
+
+  def update(comment_id, attrs \\ %{}) do
+    Agent.update(__MODULE__, fn state ->
+      temp =
+        state[comment_id]
+        |> case do
+          nil -> %{}
+          _ -> state[comment_id]
+        end
+        |> Map.merge(attrs)
+
+      Map.merge(state, %{comment_id => temp})
+    end)
+  end
+end
+
 defmodule Reddit.Processor do
   use GenServer
   alias AnticarCrawler.Link
@@ -232,7 +264,8 @@ defmodule Reddit.Processor do
           curr
           |> get_in(["data", "is_submitter"])
 
-        PostState.update(post_id, %{"tag" => link_flair_text, "is_op" => is_submitter})
+        PostState.update(post_id, %{"tag" => link_flair_text})
+        CommentState.update(id, %{"is_op" => is_submitter})
 
         Link.create_comment(%{
           "body" => body,
