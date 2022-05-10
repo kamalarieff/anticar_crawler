@@ -152,11 +152,12 @@ defmodule Reddit.Processor do
     "UkraineWithoutTheBot",
     "gifendore",
     "GifReversingBot",
-    "MAGIC_EYE_BOT"
+    "MAGIC_EYE_BOT",
+    "stabbot"
   ]
 
   @blocked_links [
-    ~r<(google\.(com|ca|de|at|nl)|goo\.gl)/maps>,
+    ~r<(google\.(com|ca|de|at|nl|au)|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
     ~r<g.page>,
     ~r<earth.google.com>,
