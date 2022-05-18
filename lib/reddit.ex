@@ -181,7 +181,11 @@ defmodule Reddit.Processor do
     # Not Just Bikes - Why Grocery Shopping is Better in Amsterdam
     ~r<\bkYHTzqHIngk\b>,
     # Not Just Bikes - Business Parks Suck (but they don't have to)
-    ~r<\bSDXB0CY2tSQ\b>
+    ~r<\bSDXB0CY2tSQ\b>,
+    # Not Just Bikes - Suburbia is Subsidized: Here's the Math [ST07]
+    ~r<\b7Nw6qyyrTeI\b>,
+    # TomSka - I LIKE TRAINS (asdfmovie song)
+    ~r<\bhHkKJfcBXcw\b>
   ]
 
   def start_link(state) do
