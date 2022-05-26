@@ -153,15 +153,16 @@ defmodule Reddit.Processor do
     "gifendore",
     "GifReversingBot",
     "MAGIC_EYE_BOT",
-    "stabbot"
+    "stabbot",
+    "phonebatterylevelbot"
   ]
 
   @blocked_links [
-    ~r<(google\.(com|ca|de|at|nl|au)|goo\.gl)/maps>,
+    ~r<(google\.(com|ca|de|at|nl|au|ch)|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
     ~r<g.page>,
     ~r<earth.google.com>,
-    ~r<(fr|en|de|sv|upload)(\.m)?.wikipedia.org>,
+    ~r<(fr|en|de|sv|upload|nl)(\.m)?.wikipedia.org>,
     # Not Just Bikes - I am not a "Cyclist" (and most Dutch people aren't either)
     ~r<\bvMed1qceJ_Q\b>,
     # Not Just Bikes - Why Canadians Can't Bike in the Winter (but Finnish people can)
@@ -185,7 +186,9 @@ defmodule Reddit.Processor do
     # Not Just Bikes - Suburbia is Subsidized: Here's the Math [ST07]
     ~r<\b7Nw6qyyrTeI\b>,
     # TomSka - I LIKE TRAINS (asdfmovie song)
-    ~r<\bhHkKJfcBXcw\b>
+    ~r<\bhHkKJfcBXcw\b>,
+    # 12 best ways to get cars out of cities – ranked by new research
+    ~r<\bhttps://theconversation.com/12-best-ways-to-get-cars-out-of-cities-ranked-by-new-research-180642\b>,
   ]
 
   def start_link(state) do
