@@ -18,6 +18,23 @@ import {LiveSocket} from "phoenix_live_view"
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
+Alpine.data('notifications', () => ({
+  notifications: [],
+  visible: [],
+  init() {
+    this.$watch('notifications', (value) => {
+      const last = value[value.length-1];
+      this.visible.push(last);
+    })
+  },
+  remove_notification: {
+    ['@click']() {
+      const notice = this.visible.find(notice => notice.id == this.$el.id);
+      const index = this.visible.indexOf(notice);
+      this.visible.splice(index, 1);
+    },
+  }
+}))
 Alpine.start();
 
 let csrfToken = document
