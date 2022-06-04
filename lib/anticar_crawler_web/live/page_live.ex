@@ -5,14 +5,12 @@ defmodule AnticarCrawlerWeb.PageLive do
   alias Reddit
   alias PostState
   alias CommentState
-  alias Phoenix.LiveView.JS
 
   @impl true
   def mount(_params, _session, socket) do
     links = Link.list_comments() |> group_by_post_id()
 
-    {:ok, assign(socket, query: "", results: %{}, links: links, notifications: []),
-     temporary_assigns: [notifications: []]}
+    {:ok, assign(socket, query: "", results: %{}, links: links)}
   end
 
   @impl true
@@ -20,9 +18,7 @@ defmodule AnticarCrawlerWeb.PageLive do
     GenServer.cast(Reddit.Processor, {:process_comments, self()})
     notification = %{content: "Fetching...", id: Integer.to_string(Enum.random(0..100))}
 
-    {:noreply,
-     socket
-     |> assign(:notifications, [notification])}
+    {:noreply, socket |> push_event("notify", notification)}
   end
 
   @impl true
@@ -37,7 +33,7 @@ defmodule AnticarCrawlerWeb.PageLive do
 
     {:noreply,
      socket
-     |> assign(:notifications, [notification])
+     |> push_event("notify", notification)
      |> assign(links: links)}
   end
 
@@ -86,7 +82,8 @@ defmodule AnticarCrawlerWeb.PageLive do
 
     {:noreply,
      socket
-     |> assign(links: links, notifications: [notification])
+     |> push_event("notify", notification)
+     |> assign(links: links)
      |> clear_flash(:info)}
   end
 
@@ -136,31 +133,6 @@ defmodule AnticarCrawlerWeb.PageLive do
         ~H"""
         """
     end
-  end
-
-  @doc """
-  Show notification toast with animation
-  """
-  def notification_toast(assigns) do
-    ~H"""
-    <div class="fixed right-4 top-4 z-10">
-      <div class="flex flex-col space-y-2" xyz="fade right duration-5" id="notifications" phx-update="append">
-        <%= for notification <- @notifications do %>
-          <div class="alert alert-info xyz-in" id={notification.id} phx-click={hide_notification()}>
-            <div class="space-x-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span><%= notification.content %></span>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-    """
-  end
-
-  def hide_notification(js \\ %JS{}) do
-    js
-    |> JS.hide(transition: "xyz-out", time: 500)
   end
 
   defp search(query) do

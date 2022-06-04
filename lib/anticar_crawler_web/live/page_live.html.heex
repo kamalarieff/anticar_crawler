@@ -1,4 +1,17 @@
-<.notification_toast notifications={@notifications} />
+<div class="fixed right-4 top-4 z-10">
+  <div class="flex flex-col space-y-2" xyz="fade right duration-5" id="notifications" x-data="{ notifications: [], visible: [] }" @phx:notify.window="notifications.push($event.detail); setTimeout(() => { visible.push($event.detail); }, 1)">
+    <template x-for="notice of notifications" :key="notice.id">
+      <div x-show="visible.includes(notice)" x-transition:enter="xyz-in" x-transition:leave="xyz-out">
+        <div class="alert alert-info w-fit" :id="notice.id" @click="const notice = visible.find(notice => notice.id == $el.id); const index = visible.indexOf(notice); visible.splice(index, 1);">
+          <div class="space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span x-text="notice.content"></span>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
 <div class="fixed bottom-2 right-4 z-10">
   <button class="btn btn-primary" phx-click="trigger-crawler">Trigger crawler</button>
   <button class="btn btn-secondary" phx-click="undo-deleted-comment">Undo</button>
