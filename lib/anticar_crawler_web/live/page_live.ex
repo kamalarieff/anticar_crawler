@@ -16,7 +16,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   @impl true
   def handle_event("trigger-crawler", _args, socket) do
     GenServer.cast(Reddit.Processor, {:process_comments, self()})
-    notification = %{content: "Fetching...", id: Integer.to_string(Enum.random(0..100))}
+    notification = %{content: "Fetching...", id: Ecto.UUID.generate()}
 
     {:noreply, socket |> push_event("notify", notification)}
   end
@@ -28,7 +28,7 @@ defmodule AnticarCrawlerWeb.PageLive do
 
     notification = %{
       content: "Successfully undo last deleted comment",
-      id: Integer.to_string(Enum.random(0..100))
+      id: Ecto.UUID.generate()
     }
 
     {:noreply,
@@ -78,7 +78,7 @@ defmodule AnticarCrawlerWeb.PageLive do
   @impl true
   def handle_info(:process_comments_success, socket) do
     links = Link.list_comments() |> group_by_post_id()
-    notification = %{content: "Fetched successfully", id: Integer.to_string(Enum.random(0..100))}
+    notification = %{content: "Fetched successfully", id: Ecto.UUID.generate()}
 
     {:noreply,
      socket
