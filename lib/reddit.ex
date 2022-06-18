@@ -154,11 +154,12 @@ defmodule Reddit.Processor do
     "GifReversingBot",
     "MAGIC_EYE_BOT",
     "stabbot",
-    "phonebatterylevelbot"
+    "phonebatterylevelbot",
+    "underscorebot"
   ]
 
   @blocked_links [
-    ~r<(google\.(com|ca|de|at|nl|au|ch)|goo\.gl)/maps>,
+    ~r<(google\.(com|ca|de|at|nl|au|ch|uk)|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
     ~r<g.page>,
     ~r<earth.google.com>,
@@ -189,6 +190,12 @@ defmodule Reddit.Processor do
     ~r<\bhHkKJfcBXcw\b>,
     # 12 best ways to get cars out of cities – ranked by new research
     ~r<\bhttps://theconversation.com/12-best-ways-to-get-cars-out-of-cities-ranked-by-new-research-180642\b>,
+    # Climate Town - Who Actually Controls Gas Prices? | Climate Town
+    ~r<\bQnBqAzJXVGo\b>,
+    # Hoy - The Simpsons - Canyonero
+    ~r<\bPI_Jl5WFQkA\b>,
+    # Cars Ruin Cities Sticker 10-Pack
+    ~r<\bhttps://the-war-on-cars.myshopify.com/products/cars-ruin-cities-sticker-10-pack\b>,
   ]
 
   def start_link(state) do
