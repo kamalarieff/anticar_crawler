@@ -159,10 +159,11 @@ defmodule Reddit.Processor do
   ]
 
   @blocked_links [
-    ~r<(google\.(com|ca|de|at|nl|au|ch|uk)|goo\.gl)/maps>,
+    ~r<(google\.(com|ca|de|at|nl|au|ch|uk|pl|ro)|goo\.gl)/maps>,
     ~r<maps.app.goo.gl>,
     ~r<g.page>,
     ~r<earth.google.com>,
+    ~r<arcgis.com>,
     ~r<(fr|en|de|sv|upload|nl)(\.m)?.wikipedia.org>,
     # Not Just Bikes - I am not a "Cyclist" (and most Dutch people aren't either)
     ~r<\bvMed1qceJ_Q\b>,
@@ -196,6 +197,14 @@ defmodule Reddit.Processor do
     ~r<\bPI_Jl5WFQkA\b>,
     # Cars Ruin Cities Sticker 10-Pack
     ~r<\bhttps://the-war-on-cars.myshopify.com/products/cars-ruin-cities-sticker-10-pack\b>,
+    # Not Just Bikes - There's Something Wrong With Suburbia (The Orange Pill)
+    ~r<\bOQE_5MFCekg\b>,
+    # Propel - This American Mayor is Creating the Ultimate Biking City
+    ~r<\bFlVWv9O0qQ4\b>,
+    # Not Just Bikes - The Gym of Life
+    ~r<\bKPUlgSRn6e0\b>,
+    # Not Just Bikes - Why We Won't Raise Our Kids in Suburbia
+    ~r<\boHlpmxLTxpw\b>,
   ]
 
   def start_link(state) do
